@@ -1,0 +1,1 @@
+export type TypeOfPiece = "Pawn" | "Knight" | "Bishop" | "Rook" | "Queen" | "King"
