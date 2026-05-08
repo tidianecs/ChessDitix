@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { Board } from "../models/Board";
 import type { Piece } from "../models/Piece";
+import type { Coord } from "../models/Coord";
 
 function createEmptyBoard(): Board {
     return Array.from({length: 8}, () => 
@@ -83,14 +84,34 @@ function getEmojiPiece(piece: Piece): string {
 }
 
 function BoardComponent() {
-    const [board, setBoard] = useState<Board>(initializeBoard())
+    const [ board, setBoard ] = useState<Board>(initializeBoard());
+    const [ selectedSquare, setSelectedSquare ] = useState<Coord | null>(null);
+
+    function handleSquareClick(row: number, col: number){
+        const clickedPiece = board[row][col];
+
+        if(selectedSquare == null){
+            if(clickedPiece != null){
+                setSelectedSquare({row: row, col: col})
+                console.log("[ " + row + ", " + col + " ]");
+            }
+        }
+        else{
+            const newBoard = board.map(row => [...row]);
+            const piece = newBoard[selectedSquare.row][selectedSquare.col];
+            newBoard[row][col] = piece
+            newBoard[selectedSquare.row][selectedSquare.col] = null
+            setBoard(newBoard)
+            setSelectedSquare(null)
+        }
+    }
 
     return (
         <div className="inline-block border-2 border-gray-800">
             {board.map((square, row_index) => (
                 <div key={row_index} className="flex">
                     {square.map((piece, col_index) => (
-                        <div key={col_index} className={`flex items-center justify-center text-3xl w-16 h-16 ${(row_index + col_index) % 2 === 0 ? "bg-amber-100" : "bg-green-700"}`}>
+                        <div key={col_index} onClick={() => {handleSquareClick(row_index, col_index)}} className={`flex items-center justify-center text-3xl w-16 h-16 ${(row_index + col_index) % 2 === 0 ? "bg-amber-100" : "bg-green-700"}`}>
                         {piece != null ? getEmojiPiece(piece) : null}
                         </div>
                     ))}
