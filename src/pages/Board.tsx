@@ -2,6 +2,7 @@ import { useState } from "react";
 import type { Board } from "../models/Board";
 import type { Piece } from "../models/Piece";
 import type { Coord } from "../models/Coord";
+import { getValidMoves } from "../utils/moveValidation";
 
 function createEmptyBoard(): Board {
     return Array.from({length: 8}, () => 
@@ -86,23 +87,60 @@ function getEmojiPiece(piece: Piece): string {
 function BoardComponent() {
     const [ board, setBoard ] = useState<Board>(initializeBoard());
     const [ selectedSquare, setSelectedSquare ] = useState<Coord | null>(null);
+    const [ isWhiteTurn, setIsWhiteTurn ] = useState<boolean>(true);
+    const [validMoves, setValidMoves] = useState<Coord[]>([])
 
     function handleSquareClick(row: number, col: number){
         const clickedPiece = board[row][col];
 
-        if(selectedSquare == null){
-            if(clickedPiece != null){
-                setSelectedSquare({row: row, col: col})
-                console.log("[ " + row + ", " + col + " ]");
+        if(isWhiteTurn){
+            if(selectedSquare == null){
+                if(clickedPiece != null && clickedPiece.color == 'White'){
+                    setSelectedSquare({row: row, col: col})
+                    setValidMoves(getValidMoves(clickedPiece, {row: row, col: col}, board))
+                    console.log("[ " + row + ", " + col + " ]");
+                    //console.log(getValidMoves(clickedPiece, {row: row, col: col}, board))
+                }
+            }
+            else{
+                if(validMoves.some(move => move.row === row && move.col === col)){
+                    const newBoard = board.map(row => [...row]);
+                    const piece = newBoard[selectedSquare.row][selectedSquare.col];
+                    newBoard[row][col] = piece
+                    newBoard[selectedSquare.row][selectedSquare.col] = null
+                    setBoard(newBoard)
+                    setSelectedSquare(null)
+                    setIsWhiteTurn(false)
+                }
+                else {
+                    setSelectedSquare(null)
+                    setValidMoves([])
+                }
             }
         }
         else{
-            const newBoard = board.map(row => [...row]);
-            const piece = newBoard[selectedSquare.row][selectedSquare.col];
-            newBoard[row][col] = piece
-            newBoard[selectedSquare.row][selectedSquare.col] = null
-            setBoard(newBoard)
-            setSelectedSquare(null)
+            if(selectedSquare == null){
+                if(clickedPiece != null && clickedPiece.color == 'Black'){
+                    setSelectedSquare({row: row, col: col})
+                    setValidMoves(getValidMoves(clickedPiece, {row: row, col: col}, board))
+                    console.log("[ " + row + ", " + col + " ]");
+                }
+            }
+            else{
+                if(validMoves.some(move => move.row === row && move.col === col)){
+                    const newBoard = board.map(row => [...row]);
+                    const piece = newBoard[selectedSquare.row][selectedSquare.col];
+                    newBoard[row][col] = piece
+                    newBoard[selectedSquare.row][selectedSquare.col] = null
+                    setBoard(newBoard)
+                    setSelectedSquare(null)
+                    setIsWhiteTurn(true)
+                }
+                else {
+                    setSelectedSquare(null)
+                    setValidMoves([])
+                }
+            }
         }
     }
 
