@@ -93,58 +93,34 @@ function BoardComponent() {
     function handleSquareClick(row: number, col: number){
         const clickedPiece = board[row][col];
 
-        if(isWhiteTurn){
-            if(selectedSquare == null){
-                if(clickedPiece != null && clickedPiece.color == 'White'){
-                    setSelectedSquare({row: row, col: col})
-                    setValidMoves(getValidMoves(clickedPiece, {row: row, col: col}, board))
-                    console.log("[ " + row + ", " + col + " ]");
-                    //console.log(getValidMoves(clickedPiece, {row: row, col: col}, board))
-                }
-            }
-            else{
-                if(validMoves.some(move => move.row === row && move.col === col)){
-                    const newBoard = board.map(row => [...row]);
-                    const piece = newBoard[selectedSquare.row][selectedSquare.col];
-                    newBoard[row][col] = piece
-                    newBoard[selectedSquare.row][selectedSquare.col] = null
-                    setBoard(newBoard)
-                    setSelectedSquare(null)
-                    setIsWhiteTurn(false)
-                }
-                else {
-                    setSelectedSquare(null)
-                    setValidMoves([])
-                }
+        if(selectedSquare == null){
+            const isCorrectColor = isWhiteTurn ? clickedPiece?.color === "White" : clickedPiece?.color === "Black"
+            if(clickedPiece != null && isCorrectColor){
+                setSelectedSquare({row: row, col: col})
+                setValidMoves(getValidMoves(clickedPiece, {row: row, col: col}, board))
+                console.log("[ " + row + ", " + col + " ]");
+                //console.log(getValidMoves(clickedPiece, {row: row, col: col}, board))
             }
         }
         else{
-            if(selectedSquare == null){
-                if(clickedPiece != null && clickedPiece.color == 'Black'){
-                    setSelectedSquare({row: row, col: col})
-                    setValidMoves(getValidMoves(clickedPiece, {row: row, col: col}, board))
-                    console.log("[ " + row + ", " + col + " ]");
-                }
+            if(validMoves.some(move => move.row === row && move.col === col)){
+                const newBoard = board.map(row => [...row]);
+                const piece = newBoard[selectedSquare.row][selectedSquare.col];
+                newBoard[row][col] = piece
+                newBoard[selectedSquare.row][selectedSquare.col] = null
+                setBoard(newBoard)
+                setSelectedSquare(null)
+                setIsWhiteTurn(!isWhiteTurn)
             }
-            else{
-                if(validMoves.some(move => move.row === row && move.col === col)){
-                    const newBoard = board.map(row => [...row]);
-                    const piece = newBoard[selectedSquare.row][selectedSquare.col];
-                    newBoard[row][col] = piece
-                    newBoard[selectedSquare.row][selectedSquare.col] = null
-                    setBoard(newBoard)
-                    setSelectedSquare(null)
-                    setIsWhiteTurn(true)
-                }
-                else {
-                    setSelectedSquare(null)
-                    setValidMoves([])
-                }
+            else {
+                setSelectedSquare(null)
+                setValidMoves([])
             }
         }
     }
 
     return (
+        <>
         <div className="inline-block border-2 border-gray-800">
             {board.map((square, row_index) => (
                 <div key={row_index} className="flex">
@@ -156,6 +132,10 @@ function BoardComponent() {
                 </div>
             ))}
         </div>
+        <div>
+            <h1 className={`${isWhiteTurn ? "bg-slate-400" : "bg-black"}`}>TURN</h1>
+        </div>
+        </>
     )
 }
 export default BoardComponent;
