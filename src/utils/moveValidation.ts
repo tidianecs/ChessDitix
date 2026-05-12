@@ -73,6 +73,70 @@ export function getValidMoves(piece: Piece, from: Coord, board: Board): Coord[] 
             }
             c_leftward--
         }
+    }else if(piece.type == 'Bishop'){
+        // foward rigth
+        let r_forward_r = from.row - 1
+        let c_forward_r = from.col + 1
+        while(r_forward_r >= 0 && c_forward_r <= 7){
+            if(board[r_forward_r][c_forward_r] == null){
+                validMoves.push({ row: r_forward_r, col: c_forward_r })
+            }else if(board[r_forward_r][c_forward_r]?.color != piece.color) {
+                validMoves.push({ row: r_forward_r, col: c_forward_r  })
+                break
+            }else{
+                break
+            }
+            r_forward_r--
+            c_forward_r++
+        }
+
+        // foward left
+        let r_forward_l = from.row - 1
+        let c_forward_l = from.col - 1
+        while(r_forward_l >= 0 && c_forward_l <= 7){
+            if(board[r_forward_l][c_forward_l] == null){
+                validMoves.push({ row: r_forward_l, col: c_forward_l })
+            }else if(board[r_forward_l][c_forward_l]?.color != piece.color) {
+                validMoves.push({ row: r_forward_l, col: c_forward_l  })
+                break
+            }else{
+                break
+            }
+            r_forward_l--
+            c_forward_l--
+        }
+
+        // backward rigth
+        let r_backward_r = from.row + 1
+        let c_backward_r = from.col + 1
+        while(r_backward_r <= 7 && c_backward_r >= 0){
+            if(board[r_backward_r][c_backward_r] == null){
+                validMoves.push({ row: r_backward_r, col: c_backward_r })
+            }else if(board[r_backward_r][c_backward_r]?.color != piece.color) {
+                validMoves.push({ row: r_backward_r, col: c_backward_r  })
+                break
+            }else{
+                break
+            }
+            r_backward_r++
+            c_backward_r++
+        }
+
+        // backward left
+        let r_backward_l = from.row + 1
+        let c_backward_l = from.col - 1
+        while(r_backward_l <= 7 && c_backward_l >= 0){
+            if(board[r_backward_l][c_backward_l] == null){
+                validMoves.push({ row: r_backward_l, col: c_backward_l })
+            }else if(board[r_backward_l][c_backward_l]?.color != piece.color) {
+                validMoves.push({ row: r_backward_l, col: c_backward_l  })
+                break
+            }else{
+                break
+            }
+            r_backward_l++
+            c_backward_l--
+        }
     }
 
     // For the others pieces - later
